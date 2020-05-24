@@ -1,0 +1,3 @@
+[submodule "barlapy"]
+	path = barlapy
+	url = git@github.com:openbarlamane/barlapy
