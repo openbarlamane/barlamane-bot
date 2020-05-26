@@ -31,7 +31,7 @@ if new_index != prev_index:
     pages = convert_from_path(jarida_pdf, last_page=1)
     pages[0].save(front_page_jpg, "JPEG")
 
-    twitter.tweet("[%s] عدد جديد للجريدة الرسمية تم نشره بتاريخ %s، رابط التحميل: %s" % 
+    twitter.tweet("#الجريدة_الرسمية :  عدد جديد [%s] تم نشره بتاريخ %s %s" % 
             (new_index, date.replace('_', '/'), dl_link), False, front_page_jpg)
 
     os.rename(tmp_name, config.jarida_index_file)

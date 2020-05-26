@@ -1,0 +1,7 @@
+*.sw?
+*.csv
+*.jp.g
+*.pdf
+*.pyc
+
+config.py

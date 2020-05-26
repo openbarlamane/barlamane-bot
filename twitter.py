@@ -10,12 +10,22 @@ twitter = tweepy.API(auth)
 
 def tweet(msg, dry_run = False, img = ""):
     try:
-        print("Tweeting: ", msg)
-        if not dry_run:
+        f = open('tweets.txt', 'r+')
+        for l in f.readlines():
+            if msg == l:
+                print("Already tweeted...")
+                return
+        print("Tweeting %s: " % len(msg), msg)
+        if dry_run:
+            print("Dry running.. %s" % msg)
+            return
+        else:
             if not img:
                 twitter.update_status(msg)
             else:
                 twitter.update_with_media(img, msg)
+            f.write(msg + "\n")
+
     except Exception as e:
         print("There was an exception tweeting.")
         print(e)
