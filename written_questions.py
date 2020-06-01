@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 
+import os
 import time
 import random
 
@@ -9,6 +10,7 @@ import requests
 from bs4 import BeautifulSoup
 
 import config, twitter
+from utils import clip_question_verbatim_screenshot
 
 base_url = "https://www.chambredesrepresentants.ma"
 
@@ -54,10 +56,10 @@ def format_tweet(row):
     t = row['topic']
     u = row['url']
 
-    # hack ;)
-    if a == "بلافريج عمر":
-        a = "@omarbalafrej"
-
+    if not a:
+        a = ""
+    elif a != a:
+        a = ""
     if len(h + a + " - " + t + u) > 280:
         tmp = '... ' + u
         l = len(h + a + " - ")
@@ -81,7 +83,8 @@ def main(init = False):
     if not diff.empty:
         for index, row in diff.iterrows():
             t = format_tweet(row)
-            twitter.tweet(t)
+            question_text = clip_question_verbatim_screenshot(row['url'], './written_questions_text')
+            twitter.tweet(t, False, question_text)
             time.sleep(random.randint(2, 30))
 
         new_pd.to_csv(config.written_questions_csv)

@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 
+import os
 import time
 import random
 
@@ -9,6 +10,7 @@ import requests
 from bs4 import BeautifulSoup
 
 import config, twitter
+from utils import clip_question_verbatim_screenshot
 
 base_url = "https://www.chambredesrepresentants.ma"
 
@@ -71,12 +73,15 @@ def main(init=False):
         return
 
     prev_pd = pd.read_csv(config.oral_questions_csv)
+    print("Prev pd")
+    display_df(prev_pd)
     diff = get_diff(prev_pd, new_pd)
 
     if not diff.empty:
         for index, row in diff.iterrows():
             t = format_tweet(row)
-            twitter.tweet(t)
+            question_text = clip_question_verbatim_screenshot(row['url'], './oral_questions_text')
+            twitter.tweet(t, False, question_text)
             time.sleep(random.randint(2, 30))
 
         new_pd.to_csv(config.oral_questions_csv)
@@ -84,4 +89,4 @@ def main(init=False):
         print("Nothing new")
 
 if __name__ == "__main__":
-    main(False)
+    main()
