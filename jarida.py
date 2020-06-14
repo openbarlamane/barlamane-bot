@@ -5,6 +5,9 @@ from bs4 import BeautifulSoup
 import requests
 
 import twitter, config
+from datetime import datetime
+
+print(datetime.now().strftime("%d/%m/%Y %H:%M"))
 
 r = requests.get("http://www.sgg.gov.ma/arabe/Legislations/DernierBulletinOfficiel.aspx")
 soup = BeautifulSoup(r.text, 'html.parser')
@@ -12,7 +15,8 @@ soup = BeautifulSoup(r.text, 'html.parser')
 new_index = soup.find_all(class_='Normal UDT_Table_AlternateItem')[1].text.split('\n')[1]
 
 jarida_file = open(config.jarida_index_file, "r+")
-prev_index = jarida_file.read(4)
+prev_index = jarida_file.read()
+print("Prev index: ", prev_index)
 
 if new_index != prev_index:
     tmp_name = "jarida_new.txt"
@@ -35,3 +39,5 @@ if new_index != prev_index:
             (new_index, date.replace('_', '/'), dl_link), False, front_page_jpg)
 
     os.rename(tmp_name, config.jarida_index_file)
+else:
+    print("Nothing new")
