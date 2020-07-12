@@ -3,6 +3,8 @@
 import time
 import random
 
+from datetime import datetime
+
 import pandas as pd
 
 import requests
@@ -14,10 +16,17 @@ from utils import download_first_page_as_jpeg
 base_url = "https://www.chambredesrepresentants.ma"
 
 def get_dl_link(path):
+    print("Dl link from : %s" % path)
     r = requests.get(base_url + path)
     s = BeautifulSoup(r.text, 'html.parser')
-    link = s.find_all(class_='dp-section mb-4')[0].find_all('a', href=True)[0]['href']
-    print("dl link: ", link)
+
+    # Sometimes pdf links are missing
+    try:
+        link = s.find_all(class_='dp-section mb-4')[0].find_all('a', href=True)[0]['href']
+        print("dl link: ", link)
+    except Exception as e:
+        print("There was an exception retrieving download link: %s" % e)
+        link = ""
     return link
 
 def get_new_elements():
@@ -48,12 +57,11 @@ def get_diff(prev_pd, new_pd):
 def format_tweet(row):
     h = "#مقترح_قانون : "
     n = row['name']
-    u = base_url + row['link']
+    u = base_url + row['link'] # dl_link instead no ?
 
     r = 280 - len(h)
 
     return "%s %s %s" % (h, n[0:r], u)
-
 
 def main(init = False):
     new_pd = get_new_elements()
@@ -73,13 +81,16 @@ def main(init = False):
         for index, row in diff.iterrows():
             t = format_tweet(row)
 
-            first_page = 'law_propositions/' + row['dl_link'].rpartition('/')[-1].replace('pdf', 'jpg')
-            download_first_page_as_jpeg(row['dl_link'], first_page)
-
-            twitter.tweet(t, False, first_page)
+            if row['dl_link'] != '':
+                first_page = 'law_propositions/' + row['dl_link'].rpartition('/')[-1].replace('pdf', 'jpg')
+                download_first_page_as_jpeg(row['dl_link'], first_page)
+                twitter.tweet(t, False, first_page)
+            else:
+                twitter.tweet(t)
             time.sleep(random.randint(2, 30))
 
         new_pd.to_csv(config.law_propositions_csv_file)
 
 if __name__ == "__main__":
+    print(datetime.now().strftime("%d/%m/%Y %H:%M"))
     main()

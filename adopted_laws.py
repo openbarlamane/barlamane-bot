@@ -8,6 +8,8 @@ import time
 import random
 import pandas as pd
 
+from datetime import datetime
+
 from pdf2image import convert_from_path
 from pathlib import Path
 
@@ -72,11 +74,11 @@ def main():
         print("New elements: ", diff)
 
         for index, row in diff.iterrows():
-            first_page = 'adopted/law_front_page_' + row['dl_link'].rpartition('/')[-1].replace('pdf,' 'jpg')
-            download_law_front_page(row['dl_link'], first_page)
+            first_page = 'adopted/law_front_page_' + row['dl_link'].rpartition('/')[-1].replace('pdf', 'jpg')
+            download_first_page_as_jpeg(row['dl_link'], first_page)
             
             t = format_tweet(row)
-            twitter.tweet(t, False, front_page) 
+            twitter.tweet(t, False, first_page) 
             time.sleep(random.randint(2, 30))
 
         new_pd.to_csv(config.adopted_law_csv_file)
@@ -85,4 +87,5 @@ def main():
 
 
 if __name__ == "__main__":
+    print(datetime.now().strftime("%d/%m/%Y %H:%M"))
     main()

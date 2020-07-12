@@ -12,7 +12,10 @@ print(datetime.now().strftime("%d/%m/%Y %H:%M"))
 r = requests.get("http://www.sgg.gov.ma/arabe/Legislations/DernierBulletinOfficiel.aspx")
 soup = BeautifulSoup(r.text, 'html.parser')
 
-new_index = soup.find_all(class_='Normal UDT_Table_AlternateItem')[1].text.split('\n')[1]
+elt = soup.find_all(class_='Normal UDT_Table_AlternateItem')
+if len(elt) < 1:
+    elt = soup.find_all(class_=' Normal UDT_Table_AlternateItem ')
+new_index = elt[1].text.split('\n')[1]
 
 jarida_file = open(config.jarida_index_file, "r+")
 prev_index = jarida_file.read()

@@ -1,12 +1,27 @@
+#!/usr/bin/python3
+
 import os
 import requests
 
+import pymongo
 from pdf2image import convert_from_path
 from pathlib import Path
 
 from selenium import webdriver
 from selenium.webdriver.firefox.options import Options
 from Screenshot import Screenshot_Clipping
+
+import config 
+
+WRITTEN_Q_PAGE = "https://www.chambredesrepresentants.ma/ar/%D8%A7%D9%84%D8%A3%D8%B3%D9%80%D8%A6%D9%84%D8%A9-%D8%A7%D9%84%D9%83%D8%AA%D8%A7%D8%A8%D9%8A%D8%A9"
+ORAL_Q_PAGE = "https://www.chambredesrepresentants.ma/ar/%D9%85%D8%B1%D8%A7%D9%82%D8%A8%D8%A9-%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D8%A7%D9%84%D8%AD%D9%83%D9%88%D9%85%D9%8A/%D8%A7%D9%84%D8%A3%D8%B3%D9%80%D8%A6%D9%84%D8%A9-%D8%A7%D9%84%D8%B4%D9%81%D9%88%D9%8A%D8%A9"
+
+twitter_map = {'لحسن حداد': '@lahcenhaddad', 'عمر بلافريج': '@omarbalafrej'}
+
+def connect_to_db():
+    mongo = pymongo.MongoClient(config.mongo_db_url)
+    db = mongo["barlamane"]
+    return db
 
 def download_first_page_as_jpeg(dl_link, dest):
     tmp = 'tmp_download.pdf'

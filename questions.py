@@ -10,15 +10,17 @@ Usage:
 import sys
 import time
 import random
-import pymongo
-import requests
-from bs4 import BeautifulSoup
 from datetime import datetime
 
-from barlapy.barlapy.parser import parse_questions_in_page
+from barlapy.parser import parse_questions_in_page
 
-import config, twitter
-from utils import clip_question_verbatim_screenshot
+import twitter
+from utils import twitter_map, WRITTEN_Q_PAGE, ORAL_Q_PAGE, clip_question_verbatim_screenshot, connect_to_db
+
+def match_twitter(author):
+    if author in twitter_map.keys():
+        return twitter_map[author]
+    return author
 
 def format_tweet(qtype, row):
     if qtype == 'written':
@@ -26,7 +28,7 @@ def format_tweet(qtype, row):
     elif qtype == 'oral':
         h = "#سؤال_شفوي : "
 
-    a = '، '.join(row['author'])
+    a = '، '.join(list(map(match_twitter, row['author'])))
     t = row['topic']
     u = row['url']
 
@@ -45,9 +47,9 @@ def get_new_questions(questions_db, qtype):
     found_in_db = False
     while not found_in_db:
         if qtype == 'written':
-            url = "https://www.chambredesrepresentants.ma/ar/%D8%A7%D9%84%D8%A3%D8%B3%D9%80%D8%A6%D9%84%D8%A9-%D8%A7%D9%84%D9%83%D8%AA%D8%A7%D8%A8%D9%8A%D8%A9"
+            url = WRITTEN_Q_PAGE
         elif qtype == 'oral':
-            url = "https://www.chambredesrepresentants.ma/ar/%D9%85%D8%B1%D8%A7%D9%82%D8%A8%D8%A9-%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D8%A7%D9%84%D8%AD%D9%83%D9%88%D9%85%D9%8A/%D8%A7%D9%84%D8%A3%D8%B3%D9%80%D8%A6%D9%84%D8%A9-%D8%A7%D9%84%D8%B4%D9%81%D9%88%D9%8A%D8%A9"
+            url = ORAL_Q_PAGE
         else:
             print("Wrong parameter")
             return []
@@ -71,8 +73,7 @@ def get_new_questions(questions_db, qtype):
     return new_questions
 
 def main(qtype):
-    mongo = pymongo.MongoClient(config.mongo_db_url)
-    db = mongo["barlamane"]
+    db = connect_to_db()
     questions = db["questions"]
 
     new_questions = get_new_questions(questions, qtype)

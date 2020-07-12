@@ -3,5 +3,6 @@
 *.jp.g
 *.pdf
 *.pyc
+*.txt
 
 config.py
