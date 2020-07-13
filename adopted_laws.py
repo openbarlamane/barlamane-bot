@@ -64,10 +64,14 @@ def format_tweet(row):
         return h + row['text'][:240 - l] + tmp
     return h + row['text'] + " " + row['dl_link']
 
-def main():
+def main(init=False):
     new_pd = get_new_elements()
-    prev_pd = pd.read_csv(config.adopted_law_csv_file)
 
+    if init:
+        new_pd.to_csv(config.adopted_law_csv_file)
+        return
+
+    prev_pd = pd.read_csv(config.adopted_law_csv_file)
     diff = get_diff(prev_pd, new_pd)
 
     if not diff.empty:
