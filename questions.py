@@ -85,7 +85,7 @@ def main(qtype):
     for q in new_questions:
 
         d = q.to_dict()
-        d['updated_at'] = datetime.now().isoformat()
+        d['updated_at'] = datetime.now()
         res = questions.insert_one(d)
 
         print("Inserted new question, _id: %s" % res.inserted_id)
