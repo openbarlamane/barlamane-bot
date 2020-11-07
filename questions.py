@@ -59,11 +59,16 @@ def get_new_questions(questions_db, qtype):
         print("Fetching questions in page: %s" % url)
         questions = parse_questions_in_page(url)
         for q in questions:
-            if questions_db.count_documents({"id": int(q.get_id()), "type": qtype}) == 1:
+            count = questions_db.count_documents({"id": int(q.get_id()), "type": qtype})
+            if count == 1:
+                print("Found question %d in db" % q.get_id())
                 found_in_db = True
                 break
+            elif count > 1:
+                print("Question %d has %d duplicates!" % (q.get_id(), count))
+                return []
             else:
-                print("Question %s not in db (or duplicates found)" % q.get_id())
+                print("Question %d not in db" % q.get_id())
 
             new_questions.append(q)
 
