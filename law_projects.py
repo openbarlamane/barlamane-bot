@@ -81,12 +81,15 @@ def main(init = False):
         for index, row in diff.iterrows():
             t = format_tweet(row)
 
+            """
             if row['dl_link'] != '':
                 first_page = 'law_projects/' + row['dl_link'].rpartition('/')[-1].replace('pdf', 'jpg')
                 download_first_page_as_jpeg(row['dl_link'], first_page)
                 twitter.tweet(t, False, first_page)
             else:
                 twitter.tweet(t)
+            """
+            twitter.tweet(t, True)
             time.sleep(random.randint(2, 30))
 
         new_pd.to_csv(config.law_projects_csv_file)

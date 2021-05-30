@@ -96,8 +96,10 @@ def main(qtype):
         print("Inserted new question, _id: %s" % res.inserted_id)
 
         t = format_tweet(qtype, {'author': q.authors, 'topic': q.topic, 'url': q.get_url()})
-        question_text = clip_question_verbatim_screenshot(q.get_url(), './written_questions_text')
-        twitter.tweet(t, False, question_text)
+        # TODO : FIXME selenium geckodriver does not work
+        # question_text = clip_question_verbatim_screenshot(q.get_url(), './written_questions_text')
+        # twitter.tweet(t, True, question_text)
+        twitter.tweet(t, False)
         time.sleep(random.randint(2, 30))
 
 if __name__ == "__main__":
