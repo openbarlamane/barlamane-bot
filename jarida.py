@@ -1,45 +1,58 @@
 import os
 from pdf2image import convert_from_path
 from pathlib import Path
-from bs4 import BeautifulSoup
-import requests
+import re, requests
 
 import twitter, config
-from datetime import datetime
+import time
 
-print(datetime.now().strftime("%d/%m/%Y %H:%M"))
+BASE_URL = "http://www.sgg.gov.ma"
 
-r = requests.get("http://www.sgg.gov.ma/arabe/Legislations/DernierBulletinOfficiel.aspx")
-soup = BeautifulSoup(r.text, 'html.parser')
-
-elt = soup.find_all(class_='Normal UDT_Table_AlternateItem')
-if len(elt) < 1:
-    elt = soup.find_all(class_=' Normal UDT_Table_AlternateItem ')
-new_index = elt[1].text.split('\n')[1]
+url = BASE_URL + "/arabe/DesktopModules/MVC/TableListBO/BO/AjaxMethod?_=1634409796320"
+"""
+the list of the documents is fetched dynamically when loading the page, as a result
+plain-old BeautifulSoup is useless.
+I managed to find out when and the required headers (which I don't fully understand) to be
+able to retrieve it.
+"""
+latest = requests.get(url, headers = {"ModuleId": "3111", "TabId": "847"}).json()[0]
 
 jarida_file = open(config.jarida_index_file, "r+")
 prev_index = jarida_file.read()
+new_index = latest['BoNum']
 print("Prev index: ", prev_index)
+
+# convert epoch from: /Date(1633993200000)/, to a printable date used for tweeting
+def parse_and_format_date(d):
+    result = re.search('/Date\((.*)\)/', d).group(1)
+    # /!\ we need to perform a division by 1000 when casting the integer
+    # because it seems there are 3 extra '0' in the data field,
+    # which breaks epoch conversion
+    d = time.localtime(int(result) / 1000)
+    return "%02d/%02d/%02d" % (d.tm_mday, d.tm_mon, d.tm_year)
 
 if new_index != prev_index:
     tmp_name = "jarida_new.txt"
     new_jarida_file = open(tmp_name, "w+")
     new_jarida_file.write(new_index)
 
-    date = soup.find_all(class_='Normal UDT_Table_Item')[0].text.split('\n')[1].replace('.', '_')
-    print("Date: %s" % date)
-    dl_link = soup.find_all(class_='Normal UDT_Table_AlternateItem')[0].find_all('a', href=True)[0]['href']
-    jarida_pdf = Path('jarida_assets/jarida_%s.pdf' % date)
+    date = parse_and_format_date(latest['BoDate'])
+    print("date: ", date)
+
+    # download and save
+    dl_link = BASE_URL + latest['BoUrl']
+    jarida_pdf = Path('jarida_assets/jarida_%s.pdf' % new_index)
     res = requests.get(dl_link)
     jarida_pdf.write_bytes(res.content)
 
-    front_page_jpg = "jarida_assets/jarida_%s_front_page.jpg" % date
+    # print a screenshot of the first page
+    front_page_jpg = "jarida_assets/jarida_%s_front_page.jpg" % new_index
 
     pages = convert_from_path(jarida_pdf, last_page=1)
     pages[0].save(front_page_jpg, "JPEG")
 
     twitter.tweet("#الجريدة_الرسمية :  عدد جديد [%s] تم نشره بتاريخ %s %s" % 
-            (new_index, date.replace('_', '/'), dl_link), False, front_page_jpg)
+            (new_index, date, dl_link), False, front_page_jpg)
 
     os.rename(tmp_name, config.jarida_index_file)
 else:
