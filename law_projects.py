@@ -89,5 +89,6 @@ def main(init = False):
         new_pd.to_csv(config.law_projects_csv_file)
 
 if __name__ == "__main__":
+    logging.getLogger("urllib3").setLevel(logging.WARNING)
     logging.basicConfig(filename='law_projects.log', level=logging.DEBUG, format='%(asctime)s %(levelname)7s %(message)s')
     main()

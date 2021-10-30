@@ -68,5 +68,6 @@ def main():
         logging.debug("Nothing new")
 
 if __name__ == "__main__":
+    logging.getLogger("urllib3").setLevel(logging.WARNING)
     logging.basicConfig(filename='jarida.log', level=logging.DEBUG, format='%(asctime)s %(levelname)7s %(message)s')
     main()
