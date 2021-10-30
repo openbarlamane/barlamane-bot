@@ -1,3 +1,4 @@
+import logging
 import sys
 import tweepy
 import config
@@ -10,7 +11,7 @@ twitter = tweepy.API(auth)
 
 def tweet(msg, dry_run = False, img = ""):
     try:
-        print("Tweeting %s: (%s)" % (len(msg), msg))
+        logging.debug("Tweeting %s: (%s)" % (len(msg), msg))
         if dry_run:
             return
         if not img:
@@ -19,8 +20,7 @@ def tweet(msg, dry_run = False, img = ""):
             twitter.update_with_media(img, msg)
 
     except Exception as e:
-        print("There was an exception tweeting.")
-        print(e)
+        logging.error("There was an exception tweeting: %s" %e)
 
 if __name__ == '__main__':
     tweet(sys.argv[1])

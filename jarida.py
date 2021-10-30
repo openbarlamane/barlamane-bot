@@ -4,6 +4,7 @@ import re
 import time
 from pdf2image import convert_from_path
 import requests
+import logging
 
 import twitter
 import config
@@ -12,7 +13,7 @@ BASE_URL = "http://www.sgg.gov.ma"
 
 def parse_and_format_date(d):
     """
-    convert epoch from: /Date(1633993200000)/, to a printable date used for tweeting
+    convert epoch from: /Date(1633993200000)/, to a printable date used for tweeeting
     """
     result = re.search('/Date\((.*)\)/', d).group(1)
     # /!\ we need to perform a division by 1000 when casting the integer
@@ -21,7 +22,7 @@ def parse_and_format_date(d):
     d = time.localtime(int(result) / 1000)
     return "%02d/%02d/%02d" % (d.tm_mday, d.tm_mon, d.tm_year)
 
-def jarida():
+def main():
     """
     retrieve latest jarida item and tweet and update if necessary
     """
@@ -37,7 +38,7 @@ def jarida():
     jarida_file = open(config.jarida_index_file, "r+")
     prev_index = jarida_file.read()
     new_index = latest['BoNum']
-    print("Prev index: ", prev_index)
+    logging.info("Prev index: %s" % prev_index)
 
     if new_index != prev_index:
         tmp_name = "jarida_new.txt"
@@ -45,7 +46,7 @@ def jarida():
         new_jarida_file.write(new_index)
 
         date = parse_and_format_date(latest['BoDate'])
-        print("date: ", date)
+        logging.debug("date: ", date)
 
         # download and save
         dl_link = BASE_URL + latest['BoUrl']
@@ -64,6 +65,8 @@ def jarida():
 
         os.rename(tmp_name, config.jarida_index_file)
     else:
-        print("Nothing new")
+        logging.debug("Nothing new")
 
-jarida()
+if __name__ == "__main__":
+    logging.basicConfig(filename='jarida.log', level=logging.DEBUG, format='%(asctime)s %(levelname)7s %(message)s')
+    main()
