@@ -23,6 +23,12 @@ def tweet(msg, dry_run = False, img = ""):
         logging.error("There was an exception tweeting: %s" %e)
 
 if __name__ == '__main__':
-    tweet(sys.argv[1])
+    l = logging.getLogger()
+    l.addHandler(logging.StreamHandler(sys.stdout))
+    l.setLevel(logging.DEBUG)
 
+    if len(sys.argv) > 1:
+        tweet(sys.argv[1])
+    else:
+        logging.error("No argument, usage: python twitter.py <tweet>")
 
