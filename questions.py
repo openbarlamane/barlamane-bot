@@ -81,8 +81,8 @@ def parse_page(page_nb):
             t = format_tweet(qtype, {'author': q.authors, 'topic': q.topic, 'url': q.get_url()})
             twitter.tweet(t, True, question_text)
             time.sleep(random.randint(2, 30))
-        else:
-            logging.warning("There are already %d similar questions (%s)" % (count, q.get_url()))
+        elif count != 1:
+            logging.error("There are already %d similar questions (%s)" % (count, q.get_url()))
 
     logging.info("[PID:%d] Inserted: %s" % (current_process().pid, inserted))
     return inserted
@@ -113,7 +113,7 @@ if __name__ == "__main__":
         logging.error("Argument needed (--oral/-o, --written/-w)")
         sys.exit()
 
-    formatter = logging.Formatter('%(asctime)s %(levelname)7s %(message)s')
+    formatter = logging.Formatter('%(asctime)s %(levelname)6s %(message)s')
     root_logger = logging.getLogger()
 
     file_handler = logging.FileHandler('questions.log')
