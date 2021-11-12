@@ -127,8 +127,9 @@ if __name__ == "__main__":
         root_logger.addHandler(console_handler)
     root_logger.setLevel(logging.DEBUG)
 
-    # silence urllib3 verbose logs
+    # silence verbose logs from external libraries
     logging.getLogger("urllib3").setLevel(logging.WARNING)
+    logging.getLogger("api").setLevel(logging.WARNING)
 
     if sys.argv[1] == '-w' or sys.argv[1] == "--written":
         logging.info("Parsing written questions")
