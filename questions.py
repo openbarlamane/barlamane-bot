@@ -78,8 +78,8 @@ def parse_page(page_nb):
             res = questions_db.insert_one(d)
             inserted.append(q)
             logging.debug("inserted one: %s, res: %s" % (q.get_id(), res.inserted_id))
-            t = format_tweet(qtype, {'author': q.authors, 'topic': q.topic, 'url': q.get_url()})
-            twitter.tweet(t, True, question_text)
+            t = format_tweet(questions_type, {'author': q.authors, 'topic': q.topic, 'url': q.get_url()})
+            twitter.tweet(t)
             time.sleep(random.randint(2, 30))
         elif count != 1:
             logging.error("There are already %d similar questions (%s)" % (count, q.get_url()))
@@ -127,8 +127,12 @@ if __name__ == "__main__":
         root_logger.addHandler(console_handler)
     root_logger.setLevel(logging.DEBUG)
 
-    # silence urllib3 verbose logs
+    # silence verbose logs from external libraries, some are still missing...
     logging.getLogger("urllib3").setLevel(logging.WARNING)
+    logging.getLogger("requests-oauthlib").setLevel(logging.WARNING)
+    logging.getLogger("requests").setLevel(logging.WARNING)
+    logging.getLogger("urllib3").setLevel(logging.WARNING)
+    logging.getLogger("oauthlib").setLevel(logging.WARNING)
 
     if sys.argv[1] == '-w' or sys.argv[1] == "--written":
         logging.info("Parsing written questions")
