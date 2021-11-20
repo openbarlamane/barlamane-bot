@@ -5,7 +5,7 @@ import sys
 import pymongo
 from datetime import datetime, timedelta
 
-from barlapy.question import Question
+from barlapy.barlapy.question import Question
 from utils import connect_to_db, twitter_map
 import twitter
 
