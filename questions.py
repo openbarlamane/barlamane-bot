@@ -116,7 +116,7 @@ if __name__ == "__main__":
     formatter = logging.Formatter('%(asctime)s %(levelname)6s %(message)s')
     root_logger = logging.getLogger()
 
-    file_handler = logging.FileHandler('questions.log')
+    file_handler = logging.FileHandler(questions_log_file)
     file_handler.setFormatter(formatter)
     root_logger.addHandler(file_handler)
 

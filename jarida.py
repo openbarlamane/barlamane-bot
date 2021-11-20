@@ -9,7 +9,7 @@ import logging
 import twitter
 import config
 
-BASE_URL = "http://www.sgg.gov.ma"
+BASE_URL = "http://www.sgg.gov.ma" # http, not https!
 
 def parse_and_format_date(d):
     """
@@ -69,5 +69,5 @@ def main():
 
 if __name__ == "__main__":
     logging.getLogger("urllib3").setLevel(logging.WARNING)
-    logging.basicConfig(filename='jarida.log', level=logging.DEBUG, format='%(asctime)s %(levelname)7s %(message)s')
+    logging.basicConfig(filename=jarida_log_file, level=logging.DEBUG, format='%(asctime)s %(levelname)7s %(message)s')
     main()
