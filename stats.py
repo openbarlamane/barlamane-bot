@@ -9,6 +9,7 @@ from datetime import datetime, timedelta
 from barlapy.barlapy.question import Question
 from utils import connect_to_db, twitter_map
 import twitter
+import config
 
 db = connect_to_db()
 
@@ -72,7 +73,7 @@ if __name__ == "__main__":
     formatter = logging.Formatter('%(asctime)s %(levelname)6s %(message)s')
     root_logger = logging.getLogger()
 
-    file_handler = logging.FileHandler('stats.log')
+    file_handler = logging.FileHandler(config.stats_log_file)
     file_handler.setFormatter(formatter)
     root_logger.addHandler(file_handler)
 

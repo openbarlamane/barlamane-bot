@@ -40,6 +40,7 @@ $ pip install -r requirements
     * `jarida_index_file`: This file is used to store the number of the latest BO.
     * `questions_log_file`: Where questions.py logs are sent
     * `jarida_log_file`: Where jardia.py logs are sent
+    * `stats_log_file`: Where stats.py logs are sent
 
 > To get an exhaustive list, you can run this command: `grep -Rn "config\."` 
 
