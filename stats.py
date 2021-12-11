@@ -49,9 +49,16 @@ def send_summary_tweet(rankings, month = None):
     mps = db["mps"]
     for k, v in six.iteritems(rankings):
         # get party name 
+        logging.debug("k, v: %s, %s" % (k, v))
         mp = mps.find_one({"name": k, "legislature": "2021-2026"})
-        if mp != None and mp["party"] != "":
+        if mp == None:
+            logging.error("mp is None (%s)" % k)
+            continue
+
+        if mp["party"] != "":
             party = " (%s)" % mp["party"]
+        else:
+            party = " "
 
         # get twitter @ if available
         if k in twitter_map.keys():
