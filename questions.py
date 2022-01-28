@@ -132,7 +132,7 @@ def main(qtype):
         # if the frozenset of authors is already in the structure,
         # we add a new element to its list, otherwise we create it.
         if frozenset(q.authors) in d.keys():
-            d[frozenset(q.authors)].append([(q.topic, q.get_url())])
+            d[frozenset(q.authors)].append((q.topic, q.get_url()))
         else:
             d[frozenset(q.authors)] = [(q.topic, q.get_url())]
 
