@@ -124,6 +124,8 @@ def main(qtype):
         i += step
 
     logging.debug("Done, found %d new questions" % len(result))
+    if len(result) == 0:
+        return
 
     # from now on there is no more use of Question as a structure, we only
     # keep the necessary data to tweet
@@ -136,7 +138,7 @@ def main(qtype):
         else:
             d[frozenset(q.authors)] = [(q.topic, q.get_url())]
 
-    print("d = ", d.keys())
+    logging.debug("d = %s" % d.keys())
 
 
     # If we have "too much" questions, we sample the data to limit the number
@@ -152,7 +154,7 @@ def main(qtype):
          frozenset(mp5, mp6, mp7): [(topic6, url6)]}
     """
     for k in d.keys():
-        # TODO: set qtype
+        logging.info("There are %d questions in this set" % len(d[k]))
         # only one question
         if len(d[k]) == 1:
             # 0: topic, 1: url
@@ -170,6 +172,8 @@ def main(qtype):
         sleep_itv = random.randint(2, 30)
         logging.info("Sleeping %d seconds..." % sleep_itv)
         time.sleep(sleep_itv)
+
+    logging.info("DONE")
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
