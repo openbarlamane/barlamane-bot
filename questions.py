@@ -20,6 +20,9 @@ from barlapy.barlapy.parser import parse_questions_in_page
 import twitter
 from utils import *
 
+MAX_QUESTIONS_IN_THREAD=4
+MAX_TWEETS_OR_THREADS=4
+
 db = connect_to_db()
 questions_db = db["questions"]
 
@@ -144,9 +147,9 @@ def main(qtype):
     # If we have "too much" questions, we sample the data to limit the number
     # of tweets, this prevents the bot from flooding the timeline, and also being
     # potentially flagged for spam.
-    if len(d.keys()) > 7:
-        logging.debug("Too much tweets, reducing the number of elements before tweeting")
-        d = random.sample(d.keys(), 7)
+    if len(d.keys()) > MAX_TWEETS_OR_THREADS:
+        logging.debug("Too much tweets, reducing the number of elements (to %d) before tweeting" % MAX_TWEETS_OR_THREADS)
+        d = random.sample(d.keys(), MAX_TWEETS_OR_THREADS)
 
     """
     d = {frozenset(mp1, mp2, mp3): [(topic1, url1), (topic2, url2)],
@@ -167,6 +170,9 @@ def main(qtype):
                 next_tweet = "%s %s" % (q[0], q[1])
                 logging.debug("Adding to thread: %s" % next_tweet)
                 thread.append(next_tweet)
+            if len(thread) >= MAX_QUESTIONS_IN_THREAD + 1:
+                logging.debug("Too much tweets in the thread (%d), reducing the number of elements (to %d) before tweeting" % (len(thread),  MAX_QUESTIONS_IN_THREAD))
+                thread = thread[0] + random.sample(thread[0:], MAX_QUESTIONS_IN_THREAD)
             twitter.thread(thread)
 
         sleep_itv = random.randint(2, 30)
