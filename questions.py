@@ -182,34 +182,39 @@ def main(qtype):
     logging.info("DONE")
 
 if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        logging.error("Argument needed (--oral/-o, --written/-w)")
-        sys.exit()
+   try:
+        if len(sys.argv) < 2:
+            logging.error("Argument needed (--oral/-o, --written/-w)")
+            sys.exit()
 
-    formatter = logging.Formatter('%(asctime)s %(levelname)6s %(message)s')
-    root_logger = logging.getLogger()
+        formatter = logging.Formatter('%(asctime)s %(levelname)6s %(message)s')
+        root_logger = logging.getLogger()
 
-    file_handler = logging.FileHandler(config.questions_log_file)
-    file_handler.setFormatter(formatter)
-    root_logger.addHandler(file_handler)
+        file_handler = logging.FileHandler(config.questions_log_file)
+        file_handler.setFormatter(formatter)
+        root_logger.addHandler(file_handler)
 
-    # tee to stdout
-    if len(sys.argv) >= 3 and sys.argv[2] == "-std":
-        console_handler = logging.StreamHandler(sys.stdout)
-        console_handler.setFormatter(formatter)
-        root_logger.addHandler(console_handler)
-    root_logger.setLevel(logging.DEBUG)
+        # tee to stdout
+        if len(sys.argv) >= 3 and sys.argv[2] == "-std":
+            console_handler = logging.StreamHandler(sys.stdout)
+            console_handler.setFormatter(formatter)
+            root_logger.addHandler(console_handler)
+        root_logger.setLevel(logging.DEBUG)
 
-    # silence verbose logs from external libraries, some are still missing...
-    logging.getLogger("urllib3").setLevel(logging.WARNING)
-    logging.getLogger("requests-oauthlib").setLevel(logging.WARNING)
-    logging.getLogger("requests").setLevel(logging.WARNING)
-    logging.getLogger("urllib3").setLevel(logging.WARNING)
-    logging.getLogger("oauthlib").setLevel(logging.WARNING)
+        # silence verbose logs from external libraries, some are still missing...
+        logging.getLogger("urllib3").setLevel(logging.WARNING)
+        logging.getLogger("requests-oauthlib").setLevel(logging.WARNING)
+        logging.getLogger("requests").setLevel(logging.WARNING)
+        logging.getLogger("urllib3").setLevel(logging.WARNING)
+        logging.getLogger("oauthlib").setLevel(logging.WARNING)
 
-    if sys.argv[1] == '-w' or sys.argv[1] == "--written":
-        logging.info("Parsing written questions")
-        main("written")
-    elif sys.argv[1] == '-o' or sys.argv[1] == "--oral":
-        logging.info("Parsing oral questions")
-        main("oral")
+        if sys.argv[1] == '-w' or sys.argv[1] == "--written":
+            logging.info("Parsing written questions")
+            main("written")
+        elif sys.argv[1] == '-o' or sys.argv[1] == "--oral":
+            logging.info("Parsing oral questions")
+            main("oral")
+
+   except Exception as e:
+      logging.exception("oh, no! we crashed. Error: %s", e)
+
