@@ -148,7 +148,7 @@ def main(qtype):
     # of tweets, this prevents the bot from flooding the timeline, and also being
     # potentially flagged for spam.
     if len(d.keys()) > MAX_TWEETS_OR_THREADS:
-        logging.debug("Too much tweets, reducing the number of elements (to %d) before tweeting" % MAX_TWEETS_OR_THREADS)
+        logging.debug("Too much tweets (%d), reducing the number of elements (to %d) before tweeting" % (len(d.keys()), MAX_TWEETS_OR_THREADS))
         d = random.sample(d.keys(), MAX_TWEETS_OR_THREADS)
 
     """
