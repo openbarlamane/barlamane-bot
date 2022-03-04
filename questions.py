@@ -143,13 +143,14 @@ def main(qtype):
 
     logging.debug("d = %s" % d.keys())
 
-
     # If we have "too much" questions, we sample the data to limit the number
     # of tweets, this prevents the bot from flooding the timeline, and also being
     # potentially flagged for spam.
     if len(d.keys()) > MAX_TWEETS_OR_THREADS:
         logging.debug("Too much tweets (%d), reducing the number of elements (to %d) before tweeting" % (len(d.keys()), MAX_TWEETS_OR_THREADS))
-        d = random.sample(d.keys(), MAX_TWEETS_OR_THREADS)
+        # sample the dictionary
+        sampled_keys = random.sample(d.keys(), MAX_TWEETS_OR_THREADS)
+        d = { k: d[k] for k in sampled_keys }
 
     """
     d = {frozenset(mp1, mp2, mp3): [(topic1, url1), (topic2, url2)],
@@ -172,7 +173,7 @@ def main(qtype):
                 thread.append(next_tweet)
             if len(thread) >= MAX_QUESTIONS_IN_THREAD + 1:
                 logging.debug("Too much tweets in the thread (%d), reducing the number of elements (to %d) before tweeting" % (len(thread),  MAX_QUESTIONS_IN_THREAD))
-                thread = thread[0] + random.sample(thread[0:], MAX_QUESTIONS_IN_THREAD)
+                thread = list(thread[0]) + random.sample(thread[0:], MAX_QUESTIONS_IN_THREAD)
             twitter.thread(thread)
 
         sleep_itv = random.randint(2, 30)
