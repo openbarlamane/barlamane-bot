@@ -173,7 +173,7 @@ def main(qtype):
                 thread.append(next_tweet)
             if len(thread) >= MAX_QUESTIONS_IN_THREAD + 1:
                 logging.debug("Too much tweets in the thread (%d), reducing the number of elements (to %d) before tweeting" % (len(thread),  MAX_QUESTIONS_IN_THREAD))
-                thread = list(thread[0]) + random.sample(thread[0:], MAX_QUESTIONS_IN_THREAD)
+                thread = [thread[0]] + random.sample(thread[0:], MAX_QUESTIONS_IN_THREAD)
             twitter.thread(thread)
 
         sleep_itv = random.randint(2, 30)
