@@ -46,13 +46,13 @@ def main():
         new_jarida_file.write(new_index)
 
         date = parse_and_format_date(latest['BoDate'])
-        logging.debug("date: " % date)
+        logging.debug("date: %s" % date)
 
         # download and save
         dl_link = BASE_URL + latest['BoUrl']
         jarida_pdf = Path('jarida_assets/jarida_%s.pdf' % new_index)
         res = requests.get(dl_link)
-        jarida_pdf.write_bytes(res.content)
+        logging.debug("wrote %s bytes to output" % jarida_pdf.write_bytes(res.content))
 
         # print a screenshot of the first page
         front_page_jpg = "jarida_assets/jarida_%s_front_page.jpg" % new_index
