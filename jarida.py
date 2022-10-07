@@ -49,7 +49,7 @@ def main():
         logging.debug("date: %s" % date)
 
         # download and save
-        dl_link = BASE_URL + latest['BoUrl']
+        dl_link = latest['BoUrl']
         jarida_pdf = Path('jarida_assets/jarida_%s.pdf' % new_index)
         res = requests.get(dl_link)
         logging.debug("wrote %s bytes to output" % jarida_pdf.write_bytes(res.content))
