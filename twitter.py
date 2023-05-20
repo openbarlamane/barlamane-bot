@@ -3,21 +3,31 @@ import sys
 import tweepy
 import config
 
-auth = tweepy.OAuthHandler(config.twitter_oauth_consumer_key, 
+# v1, still necessary for image upload, see https://github.com/tweepy/tweepy/discussions/1954
+auth = tweepy.OAuthHandler(config.twitter_oauth_consumer_key,
                            config.twitter_oauth_consumer_secret)
 auth.set_access_token(config.twitter_oauth_access_token_key,
                       config.twitter_oauth_access_token_secret)
-twitter = tweepy.API(auth)
+api = tweepy.API(auth)
+
+# v2
+twitter = tweepy.Client(
+        consumer_key=config.twitter_oauth_consumer_key,
+        consumer_secret=config.twitter_oauth_consumer_secret,
+        access_token=config.twitter_oauth_access_token_key,
+        access_token_secret=config.twitter_oauth_access_token_secret)
 
 def tweet(msg, dry_run=False, img=""):
     try:
         logging.debug("Tweeting %s: (%s)" % (len(msg), msg))
         if dry_run:
             return
+
         if not img:
-            return twitter.update_status(msg)
+            return twitter.create_tweet(text=msg)
         else:
-            return twitter.update_with_media(img, msg)
+            media = api.media_upload(img)
+            return twitter.create_tweet(text=msg, media_ids=[media.media_id])
 
     except Exception as e:
         logging.error("There was an exception tweeting: %s" % e)
