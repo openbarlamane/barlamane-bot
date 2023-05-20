@@ -27,6 +27,6 @@ selenium==3.141.0
 Selenium-Screenshot==1.7.0
 six==1.15.0
 soupsieve==2.0.1
-tweepy==3.8.0
+tweepy==4.14.0
 urllib3==1.25.9
 wordcloud==1.7.0
