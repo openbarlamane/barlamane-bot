@@ -7,13 +7,13 @@ cycler==0.10.0
 dnspython==1.16.0
 future==0.18.2
 idna==2.9
-lxml==4.5.1
+lxml==4.9.1
 matplotlib==2.2.5
 numpy==1.19.0
 oauthlib==3.1.0
 pandas==1.0.5
 pdf2image==1.13.1
-Pillow==7.2.0
+Pillow==9.0.1
 PyArabic==0.6.7
 pymongo==3.10.1
 pyparsing==2.4.7
@@ -28,5 +28,5 @@ Selenium-Screenshot==1.7.0
 six==1.15.0
 soupsieve==2.0.1
 tweepy==4.14.0
-urllib3==1.25.9
+urllib3==1.26.5
 wordcloud==1.7.0
