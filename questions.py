@@ -163,7 +163,10 @@ def main(qtype):
         if len(d[k]) == 1:
             # 0: topic, 1: url
             t = format_tweet(qtype, {'author': k, 'topic': d[k][0][0], 'url': d[k][0][1]})
-            twitter.tweet(t)
+            img = clip_question_verbatim_screenshot(d[k][0][1])
+            logging.debug("img = %s" % img)
+            res = twitter.tweet(t, img=img)
+            logging.debug("twitter.tweet returned: %s" % res)
         # multiple questions
         else:
             thread = [format_thread_header(qtype, k)]
